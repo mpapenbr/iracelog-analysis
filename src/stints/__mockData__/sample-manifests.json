@@ -1,0 +1,58 @@
+[
+  {
+    "car": [
+      "state",
+      "carIdx",
+      "carNum",
+      "userName",
+      "teamName",
+      "carClass",
+      "pos",
+      "pic",
+      "lap",
+      "lc",
+      "gap",
+      "interval",
+      "trackPos",
+      "speed",
+      "dist",
+      "pit",
+      "last",
+      "best",
+      "s1",
+      "s2",
+      "s3"
+    ],
+    "session": [
+      "sessionTime",
+      "timeRemain",
+      "lapsRemain",
+      "flagState",
+      "timeOfDay",
+      "airTemp",
+      "airDensity",
+      "airPressure",
+      "trackTemp",
+      "windDir",
+      "windVel"
+    ],
+    "pit": [
+      "carNum",
+      "type",
+      "enterTime",
+      "exitTime",
+      "laneTime",
+      "stintTime",
+      "lapEnter",
+      "lapExit"
+    ],
+    "message": [
+      "type",
+      "subType",
+      "carIdx",
+      "carNum",
+      "carClass",
+      "msg"
+    ]
+  }
+]
