@@ -1,4 +1,6 @@
-import { bulkProcess, bulkProcessFile, BulkProcessor } from "../bulkProcessing";
+import { bulkProcess } from "../bulkProcessing";
+import { bulkProcessFile } from "../bulkProcessingBackend";
+import { BulkProcessor } from "../bulkProcessor";
 import { defaultProcessRaceStateData } from "../types";
 import { readManifestsFromFile } from "../util";
 
