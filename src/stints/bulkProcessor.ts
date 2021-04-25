@@ -43,7 +43,7 @@ export class BulkProcessor {
     var lastCarMsg;
 
     jsonItems.forEach((m) => {
-      this.processOneJsonItem(m.payload);
+      this.processOneJsonItem(m);
       lastSessionMsg = { msgType: m.msgType, timestamp: m.timestamp, data: m.payload.session };
       lastCarMsg = { msgType: m.msgType, timestamp: m.timestamp, data: m.payload.cars };
     });
@@ -62,8 +62,8 @@ export class BulkProcessor {
       infoMsgs: this.infoMsg,
     };
   }
-  private processOneJsonItem(payload: any) {
-    const carsData = payload.cars;
+  private processOneJsonItem(m: any) {
+    const carsData = m.payload.cars;
     carsData.forEach((carEntry: []) => {
       const currentCarNum = getValueViaSpec(carEntry, this.manifests.car, "carNum");
       if (!this.carComputeState.has(currentCarNum)) {
@@ -74,7 +74,7 @@ export class BulkProcessor {
       }
     });
 
-    const sessionTime = getValueViaSpec(payload.session, this.manifests.session, "sessionTime");
+    const sessionTime = getValueViaSpec(m.payload.session, this.manifests.session, "sessionTime");
     carsData.forEach((carEntry: []) => {
       this.processDriverAndTeam(carEntry, sessionTime);
       this.processStintAndPit(carEntry, sessionTime);
@@ -82,7 +82,8 @@ export class BulkProcessor {
     this.raceOrder = processForRaceOrder(this.manifests, carsData);
     this.raceGraph = processForRaceGraph(this.current, this.manifests, this.raceGraph, carsData);
     this.processForLapGraph(this.current, carsData);
-    if (payload.messages.length > 0) this.infoMsg.push(...payload.messages);
+    if (m.payload.messages.length > 0)
+      this.infoMsg.push({ msgType: 1, timestamp: m.timestamp, data: m.payload.messages });
   }
 
   private processForLapGraph(current: IProcessRaceStateData, newData: [][]) {

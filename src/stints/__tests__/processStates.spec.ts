@@ -14,6 +14,7 @@ describe("process test messages", () => {
   const data = [
     {
       ...emptyData,
+      timestamp: 1616259562,
       payload: {
         ...emptyPayload,
         session: [10, 3600, 10, "GREEN"],
@@ -21,10 +22,15 @@ describe("process test messages", () => {
           ["RUN", "1", "D1a", "T1", "", "1", "1", "1", "0", "0", "0", "0"],
           ["RUN", "2", "D2", "T2", "", "2", "2", "1", "0", "0", "0", "0"],
         ],
+        messages: [
+          ["Pits", "Enter", "1", null, "#1 enter"],
+          ["Pits", "Enter", "2", null, "#2 enter"],
+        ],
       },
     },
     {
       ...emptyData,
+      timestamp: 1616259563,
       payload: {
         ...emptyPayload,
         session: [20, 3600, 10, "GREEN"],
@@ -32,10 +38,12 @@ describe("process test messages", () => {
           ["RUN", "1", "D1b", "T1", "", "1", "1", "1", "0", "0", "0", "0"],
           ["RUN", "2", "D2", "T2", "", "2", "2", "1", "0", "0", "0", "0"],
         ],
+        messages: [["Pits", "Exit", "1", null, "#1 exit"]],
       },
     },
     {
       ...emptyData,
+      timestamp: 1616259562,
       payload: {
         ...emptyPayload,
         session: [30, 3600, 10, "GREEN"],
@@ -84,6 +92,17 @@ describe("process test messages", () => {
           },
         ],
       },
+    ],
+    infoMsgs: [
+      {
+        timestamp: 1616259562,
+        msgType: 1,
+        data: [
+          ["Pits", "Enter", "1", null, "#1 enter"],
+          ["Pits", "Enter", "2", null, "#2 enter"],
+        ],
+      },
+      { timestamp: 1616259563, msgType: 1, data: [["Pits", "Exit", "1", null, "#1 exit"]] },
     ],
   };
 
