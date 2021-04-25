@@ -1,8 +1,8 @@
+import { readManifestsFromFile } from "../../backend";
 import { bulkProcess } from "../bulkProcessing";
 import { bulkProcessFile } from "../bulkProcessingBackend";
 import { BulkProcessor } from "../bulkProcessor";
 import { defaultProcessRaceStateData } from "../types";
-import { readManifestsFromFile } from "../util";
 
 describe("process test messages", () => {
   const testManifestsFile = __dirname + "/../__mockData__/test-manifests.json";

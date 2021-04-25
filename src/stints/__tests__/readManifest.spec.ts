@@ -1,4 +1,5 @@
-import { createManifests, readManifestsFromFile } from "../util";
+import { readManifestsFromFile } from "../../backend";
+import { createManifests } from "../util";
 
 describe("compose manifests", () => {
   const miniManifestArray = __dirname + "/../__mockData__/mini-manifests-array.json";
