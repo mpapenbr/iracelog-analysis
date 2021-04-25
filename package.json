@@ -1,5 +1,5 @@
 {
-  "name": "iracelog-analysis",
+  "name": "@mpapenbr/iracelog-analysis",
   "version": "1.0.1-0",
   "description": "analysis routines for iracelog",
   "main": "dist/index.js",
