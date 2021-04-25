@@ -1,5 +1,4 @@
-const dings = () => {
-  console.log("Hallo");
-};
+import { bulkProcess, bulkProcessFile, BulkProcessor } from "./stints/bulkProcessing";
+import * as Types from "./stints/types";
 
-dings();
+export { bulkProcessFile, bulkProcess, BulkProcessor, Types };

@@ -1,0 +1,28 @@
+name: Publish package on github
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+          registry-url: "https://npm.pkg.github.com"
+          # Defaults to the user or organization that owns the workflow file
+          scope: "@${{ github.repository_owner }}"
+      - run: yarn install
+      - run: yarn testCI
+      - run: yarn build
+      # Publish to GitHub Packages
+      - run: |
+          cp .npmignore dist && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -17,7 +17,7 @@ interface IShortManifest {
   pit: string[];
   message: string[];
 }
-export const createManifests = (data: IShortManifest) => {
+export const createManifests = (data: IShortManifest): IManifests => {
   const toDataSpec = (d: string[]): IDataEntrySpec[] => d.map((v) => ({ name: v, type: "string" }));
   return {
     car: toDataSpec(data.car),
