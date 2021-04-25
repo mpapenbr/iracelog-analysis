@@ -1,6 +1,6 @@
 {
   "name": "iracelog-analysis",
-  "version": "1.0.0",
+  "version": "1.0.1-0",
   "description": "analysis routines for iracelog",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,7 +37,7 @@
     "preversion": "yarn testCI",
     "postversion": "git push --tags"
   },
-  "dependencies": {    
+  "dependencies": {
     "lodash": "^4.17.21"
   }
 }
