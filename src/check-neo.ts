@@ -1,5 +1,5 @@
 import fs from "fs";
-import { bulkProcessFile } from "./stints/bulkProcessing";
+import { bulkProcessFile } from "./stints/bulkProcessingBackend";
 import { defaultProcessRaceStateData } from "./stints/types";
 import { readManifestsFromFile } from "./stints/util";
 
