@@ -38,6 +38,7 @@ export class BulkProcessor {
       currentData.carInfo.forEach((v) => this.carInfo.set(v.carNum, v));
       currentData.carLaps.forEach((v) => this.carLaps.set(v.carNum, v));
       this.infoMsg = currentData.infoMsgs;
+      this.raceGraph = currentData.raceGraph;
     }
   }
 
