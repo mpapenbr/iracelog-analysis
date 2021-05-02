@@ -3,7 +3,6 @@ import { processForRaceOrder } from "./raceOrder";
 import {
   CarComputeState,
   defaultPitInfo,
-  defaultProcessRaceStateData,
   defaultStintInfo,
   ICarComputeState,
   ICarInfo,
@@ -26,7 +25,7 @@ export class BulkProcessor {
   private raceOrder = [] as string[];
   private raceGraph = [] as IRaceGraph[];
   private infoMsg = [] as IMessage[];
-  private current: IProcessRaceStateData = { ...defaultProcessRaceStateData };
+
   private manifests: IManifests;
 
   // private manifests: IManifests = { car: [], pit: [], message: [], session: [] };
@@ -37,8 +36,7 @@ export class BulkProcessor {
   /**
    * process a bunch or messages (in json )
    */
-  public process(current: IProcessRaceStateData, jsonItems: any[]): IProcessRaceStateData {
-    this.current = current;
+  public process(jsonItems: any[]): IProcessRaceStateData {
     var lastSessionMsg;
     var lastCarMsg;
 
@@ -80,13 +78,13 @@ export class BulkProcessor {
       this.processStintAndPit(carEntry, sessionTime);
     });
     this.raceOrder = processForRaceOrder(this.manifests, carsData);
-    this.raceGraph = processForRaceGraph(this.current, this.manifests, this.raceGraph, carsData);
-    this.processForLapGraph(this.current, carsData);
+    this.raceGraph = processForRaceGraph(this.manifests, this.raceGraph, carsData);
+    this.processForLapGraph(carsData);
     if (m.payload.messages.length > 0)
       this.infoMsg.push({ msgType: 1, timestamp: m.timestamp, data: m.payload.messages });
   }
 
-  private processForLapGraph(current: IProcessRaceStateData, newData: [][]) {
+  private processForLapGraph(newData: [][]) {
     newData.forEach((carEntry) => {
       const currentCarNum = getValueViaSpec(carEntry, this.manifests.car, "carNum");
       const currentCarLap = getValueViaSpec(carEntry, this.manifests.car, "lc");
@@ -241,11 +239,7 @@ export class BulkProcessor {
     }
   }
 }
-export const bulkProcess = (
-  current: IProcessRaceStateData,
-  manifests: IManifests,
-  jsonItems: any[]
-): IProcessRaceStateData => {
+export const bulkProcess = (manifests: IManifests, jsonItems: any[]): IProcessRaceStateData => {
   const processor = new BulkProcessor(manifests);
-  return processor.process(current, jsonItems);
+  return processor.process(jsonItems);
 };
