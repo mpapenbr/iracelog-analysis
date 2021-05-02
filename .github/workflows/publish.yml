@@ -23,6 +23,6 @@ jobs:
       - run: yarn build
       # Publish to GitHub Packages
       - run: |
-          cp .npmignore dist && npm publish
+          cp .npmignore dist && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
