@@ -29,8 +29,16 @@ export class BulkProcessor {
   private manifests: IManifests;
 
   // private manifests: IManifests = { car: [], pit: [], message: [], session: [] };
-  constructor(manifests: IManifests) {
+  constructor(manifests: IManifests, currentData?: IProcessRaceStateData) {
     this.manifests = manifests;
+    if (currentData) {
+      currentData.carStints.forEach((v) => this.carStintsLookup.set(v.carNum, v));
+      currentData.carPits.forEach((v) => this.carPitsLookup.set(v.carNum, v));
+      currentData.carComputeState.forEach((v) => this.carComputeState.set(v.carNum, v));
+      currentData.carInfo.forEach((v) => this.carInfo.set(v.carNum, v));
+      currentData.carLaps.forEach((v) => this.carLaps.set(v.carNum, v));
+      this.infoMsg = currentData.infoMsgs;
+    }
   }
 
   /**
@@ -60,6 +68,7 @@ export class BulkProcessor {
       infoMsgs: this.infoMsg,
     };
   }
+
   private processOneJsonItem(m: any) {
     const carsData = m.payload.cars;
     carsData.forEach((carEntry: []) => {
