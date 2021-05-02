@@ -3,17 +3,16 @@
  */
 
 import _ from "lodash";
-import { ICarInfo, IManifests, IProcessRaceStateData, IRaceGraph } from "./types";
+import { ICarInfo, IManifests, IRaceGraph } from "./types";
 import { getValueViaSpec } from "./util";
 
 export const processForRaceGraph = (
-  current: IProcessRaceStateData,
   manifests: IManifests,
   currentRaceGraph: IRaceGraph[],
   newData: [][]
 ): IRaceGraph[] => {
   const leaderEntry = newData.find((dataRow) => getValueViaSpec(dataRow, manifests.car, "pos") === 1);
-  if (leaderEntry === undefined) return current.raceGraph;
+  if (leaderEntry === undefined) return [];
   let work = [...currentRaceGraph];
   const picLookup = computePicLookup(manifests, newData);
   work = processForRaceGraphForOverall(manifests, newData, work, picLookup);

@@ -107,23 +107,23 @@ describe("process test messages", () => {
   };
 
   it("should handle empty json", () => {
-    expect(bulkProcess(baseData, manifests, [])).toMatchObject(defaultProcessRaceStateData);
+    expect(bulkProcess(manifests, [])).toMatchObject(defaultProcessRaceStateData);
   });
 
   it("should process with json data array", () => {
-    const result = bulkProcess(baseData, manifests, data);
+    const result = bulkProcess(manifests, data);
     expect(result).toMatchObject(expectResult);
   });
 
   it("should process with single json calls", () => {
     const processor = new BulkProcessor(manifests);
     let result = baseData;
-    data.forEach((d) => (result = processor.process(result, [d])));
+    data.forEach((d) => (result = processor.process([d])));
     expect(result).toMatchObject(expectResult);
   });
 
   it("should process with data from file", () => {
-    const result = bulkProcessFile(baseData, manifests, testDataFile);
+    const result = bulkProcessFile(manifests, testDataFile);
     var check;
     result.then((d) => {
       expect(d).toMatchObject(expectResult);
