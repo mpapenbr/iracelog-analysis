@@ -225,7 +225,7 @@ describe("handling OUT state", () => {
     expect(result).toMatchObject(expectResult);
   });
 
-  it("should handle rejoin after OUT", async () => {
+  it("should handle rejoin after OUT", () => {
     // use case:
     // - car in RUN
     // - player has disconnet -> carMessage contains OUT
@@ -309,7 +309,7 @@ describe("handling OUT state", () => {
       carPits: [],
       carComputeState: [{ carNum: "1", outEncountered: 0, state: CarComputeState.RUN }],
     };
-    const result = await bulkProcess(manifests, data);
+    const result = bulkProcess(manifests, data);
     // console.log(JSON.stringify(result, null, 2));
     expect(result).toMatchObject(expectResult);
   });
