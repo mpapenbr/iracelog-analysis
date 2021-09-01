@@ -193,6 +193,7 @@ export enum CarComputeState {
 export interface ICarComputeState {
   carNum: string;
   state: CarComputeState;
+  outEncountered: number; // sessionTime when state switched form PIT/RUN to OUT
 }
 
 export interface IProcessRaceStateData {
