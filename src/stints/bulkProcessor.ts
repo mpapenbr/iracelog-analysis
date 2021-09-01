@@ -78,6 +78,7 @@ export class BulkProcessor {
         this.carComputeState.set(currentCarNum, {
           carNum: currentCarNum,
           state: CarComputeState.INIT,
+          outEncountered: 0,
         });
       }
     });
@@ -152,12 +153,14 @@ export class BulkProcessor {
     }
   }
   private processStintAndPit(carEntry: [], sessionTime: number) {
+    const OUT_THRESHOLD = 60; // after this number of seconds of continouus OUT state (via manifest) the car is considered out-of-race
     const currentCarNum = getValueViaSpec(carEntry, this.manifests.car, "carNum");
     const currentCarLap = getValueViaSpec(carEntry, this.manifests.car, "lap");
     const currentCarState = getValueViaSpec(carEntry, this.manifests.car, "state");
     if (currentCarLap < 1) return;
 
     const ccs = this.carComputeState.get(currentCarNum)!;
+
     switch (ccs.state) {
       case CarComputeState.INIT:
         {
@@ -189,17 +192,34 @@ export class BulkProcessor {
       case CarComputeState.RUN:
         {
           const x = this.carStintsLookup.get(currentCarNum)!;
+
           x.current.enterTime = sessionTime;
           x.current.lapEnter = currentCarLap;
           x.current.numLaps = currentCarLap - x.current.lapExit + 1;
           x.current.stintTime = sessionTime - x.current.exitTime;
           switch (currentCarState) {
             case "RUN":
+              ccs.outEncountered = 0; // reset possible out-of-race state
               break;
             case "OUT":
-              console.log("surprise - got OUT state for " + currentCarNum + " in state RUN");
+              // we keep the original state for at least OUT_THRESHOLD seconds. After that the car is considered out-of-race.
+              if (ccs.outEncountered === 0) {
+                ccs.outEncountered = sessionTime;
+              } else {
+                if (sessionTime - ccs.outEncountered > OUT_THRESHOLD) {
+                  // car seems to be out of race.
+
+                  ccs.state = CarComputeState.OUT;
+                  x.current.isCurrentStint = false;
+                  x.history.push({ ...x.current });
+                }
+              }
+
+              // console.log("surprise - got OUT state for " + currentCarNum + " in state RUN");
               break;
+
             case "PIT":
+              ccs.outEncountered = 0;
               x.current.isCurrentStint = false;
               x.history.push({ ...x.current });
               ccs.state = CarComputeState.PIT;
@@ -217,6 +237,7 @@ export class BulkProcessor {
               } else {
                 carPitEntry.current = newPitEntry;
               }
+
               break;
           }
         }
@@ -228,6 +249,7 @@ export class BulkProcessor {
         carPitEntry.current.laneTime = sessionTime - carPitEntry.current.enterTime;
         switch (currentCarState) {
           case "RUN":
+            ccs.outEncountered = 0;
             carPitEntry.current.isCurrentPitstop = false;
             carPitEntry.history.push(carPitEntry.current);
 
@@ -241,11 +263,41 @@ export class BulkProcessor {
             };
             ccs.state = CarComputeState.RUN;
             break;
+          case "OUT":
+            // we keep the original state for at least OUT_THRESHOLD seconds. After that the car is considered out-of-race.
+            if (ccs.outEncountered === 0) {
+              ccs.outEncountered = sessionTime;
+            } else {
+              if (sessionTime - ccs.outEncountered > OUT_THRESHOLD) {
+                // car seems to be out of race.
+                ccs.state = CarComputeState.OUT;
+              }
+            }
+            break;
 
           case "PIT":
+            ccs.outEncountered = 0;
             break;
         }
       }
+      case CarComputeState.OUT:
+        // when in OUT state, we only accept RUN to enter the state machine again.
+        // PIT in currentCarState would indicate "driver entered the car again". Let's simply wait until he leaves the pit lane and issues a RUN
+        switch (currentCarState) {
+          case "RUN":
+            {
+              const x = this.carStintsLookup.get(currentCarNum)!;
+              x.current = {
+                ...defaultStintInfo,
+                carNum: currentCarNum,
+                exitTime: sessionTime,
+                lapExit: currentCarLap,
+                isCurrentStint: true,
+              };
+              ccs.state = CarComputeState.RUN;
+            }
+            break;
+        }
     }
   }
 }
