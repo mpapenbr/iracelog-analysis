@@ -89,7 +89,7 @@ export class BulkProcessor {
       this.processStintAndPit(carEntry, sessionTime);
     });
     this.raceOrder = processForRaceOrder(this.manifests, carsData);
-    this.raceGraph = processForRaceGraph(this.manifests, this.raceGraph, carsData);
+    this.raceGraph = processForRaceGraph(this.manifests, this.carComputeState, this.raceGraph, carsData);
     this.processForLapGraph(carsData);
     if (m.payload.messages.length > 0)
       this.infoMsg.push({ msgType: 1, timestamp: m.timestamp, data: m.payload.messages });
@@ -119,7 +119,12 @@ export class BulkProcessor {
     const currentCarNum = getValueViaSpec(carEntry, this.manifests.car, "carNum");
     const currentTeamName = getValueViaSpec(carEntry, this.manifests.car, "teamName");
     const currentDriverName = getValueViaSpec(carEntry, this.manifests.car, "userName");
+    const ccs = this.carComputeState.get(currentCarNum)!;
 
+    // no more processing if car is in state out
+    if (ccs.state === CarComputeState.OUT) {
+      return;
+    }
     const newDriverEntry = () => ({
       driverName: currentDriverName,
       seatTime: [{ enterCarTime: sessionTime, leaveCarTime: sessionTime }],

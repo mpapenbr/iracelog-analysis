@@ -3,20 +3,24 @@
  */
 
 import _ from "lodash";
-import { ICarInfo, IManifests, IRaceGraph } from "./types";
+import { CarComputeState, ICarComputeState, ICarInfo, IManifests, IRaceGraph } from "./types";
 import { getValueViaSpec } from "./util";
 
 export const processForRaceGraph = (
   manifests: IManifests,
+  carComputeStates: Map<string, ICarComputeState>,
   currentRaceGraph: IRaceGraph[],
   newData: [][]
 ): IRaceGraph[] => {
   const leaderEntry = newData.find((dataRow) => getValueViaSpec(dataRow, manifests.car, "pos") === 1);
+
   if (leaderEntry === undefined) return [];
   let work = [...currentRaceGraph];
   const picLookup = computePicLookup(manifests, newData);
-  work = processForRaceGraphForOverall(manifests, newData, work, picLookup);
-  work = processForRaceGraphForClass(manifests, newData, work, picLookup);
+  const isRetired = (carNum: string): boolean => carComputeStates.get(carNum)?.state === CarComputeState.OUT ?? false;
+  work = processForRaceGraphForOverall(manifests, isRetired, newData, work, picLookup);
+  work = processForRaceGraphForClass(manifests, isRetired, newData, work, picLookup);
+
   return work;
 };
 
@@ -61,6 +65,7 @@ const computePicLookup = (manifests: IManifests, newData: [][]) => {
 
 export const processForRaceGraphForOverall = (
   manifests: IManifests,
+  isRetired: (carNum: string) => boolean,
   newData: [][],
   currentRaceGraph: IRaceGraph[],
   picLookup: Map<string, number>
@@ -70,16 +75,23 @@ export const processForRaceGraphForOverall = (
 
   const leaderLap = getValueViaSpec(leaderEntry, manifests.car, "lc");
   const foundIdx = currentRaceGraph.findIndex((v) => v.lapNo === leaderLap);
+  // const isRetired = (carEntry: []): boolean => {
+  //   return (
+  //     carComputeStates.get(getValueViaSpec(carEntry, manifests.car, "carNum"))?.state === CarComputeState.OUT ?? false
+  //   );
+  // };
   const newLapEntry: IRaceGraph = {
     carClass: "overall",
     lapNo: getValueViaSpec(leaderEntry, manifests.car, "lc"),
-    gaps: newData.map((carEntry) => ({
-      gap: getValueViaSpec(carEntry, manifests.car, "gap"),
-      lapNo: getValueViaSpec(carEntry, manifests.car, "lc"),
-      carNum: getValueViaSpec(carEntry, manifests.car, "carNum"),
-      pos: getValueViaSpec(carEntry, manifests.car, "pos"),
-      pic: picLookup.get(getValueViaSpec(carEntry, manifests.car, "carNum"))!,
-    })),
+    gaps: newData
+      .filter((carEntry) => !isRetired(getValueViaSpec(carEntry, manifests.car, "carNum")))
+      .map((carEntry) => ({
+        gap: getValueViaSpec(carEntry, manifests.car, "gap"),
+        lapNo: getValueViaSpec(carEntry, manifests.car, "lc"),
+        carNum: getValueViaSpec(carEntry, manifests.car, "carNum"),
+        pos: getValueViaSpec(carEntry, manifests.car, "pos"),
+        pic: picLookup.get(getValueViaSpec(carEntry, manifests.car, "carNum"))!,
+      })),
   };
   if (foundIdx === -1) {
     return [...currentRaceGraph, newLapEntry];
@@ -104,6 +116,7 @@ const computeCarClasses = (manifests: IManifests, data: [][]) => {
 
 const processForRaceGraphForClass = (
   manifests: IManifests,
+  isRetired: (carNum: string) => boolean,
   newData: [][],
   currentRaceGraph: IRaceGraph[],
   picLookup: Map<string, number>
@@ -115,6 +128,7 @@ const processForRaceGraphForClass = (
   carClasses.forEach((currentCarClass) => {
     carClassAdditions = internalProcessForRaceGraphForClass(
       manifests,
+      isRetired,
       newData,
       carClassAdditions,
       currentCarClass,
@@ -126,6 +140,7 @@ const processForRaceGraphForClass = (
 
 const internalProcessForRaceGraphForClass = (
   manifests: IManifests,
+  isRetired: (carNum: string) => boolean,
   newData: [][],
   currentRaceGraph: IRaceGraph[],
   currentCarClass: string,
@@ -153,6 +168,7 @@ const internalProcessForRaceGraphForClass = (
     lapNo: getValueViaSpec(leaderEntry, manifests.car, "lc"),
     gaps: newData
       .filter((carEntry) => belongsToCarClass(carEntry))
+      .filter((carEntry) => !isRetired(getValueViaSpec(carEntry, manifests.car, "carNum")))
       .map((carEntry) => ({
         gap: getValueViaSpec(carEntry, manifests.car, "gap") - getValueViaSpec(leaderEntry, manifests.car, "gap"),
         lapNo: getValueViaSpec(carEntry, manifests.car, "lc"),
