@@ -85,8 +85,8 @@ export class BulkProcessor {
 
     const sessionTime = getValueViaSpec(m.payload.session, this.manifests.session, "sessionTime");
     carsData.forEach((carEntry: []) => {
-      this.processDriverAndTeam(carEntry, sessionTime);
       this.processStintAndPit(carEntry, sessionTime);
+      this.processDriverAndTeam(carEntry, sessionTime);
     });
     this.raceOrder = processForRaceOrder(this.manifests, carsData);
     this.raceGraph = processForRaceGraph(this.manifests, this.carComputeState, this.raceGraph, carsData);
@@ -165,7 +165,7 @@ export class BulkProcessor {
     if (currentCarLap < 1) return;
 
     const ccs = this.carComputeState.get(currentCarNum)!;
-
+    // console.log(`${sessionTime}-${currentCarNum}-${ccs.state} `);
     switch (ccs.state) {
       case CarComputeState.INIT:
         {
@@ -196,12 +196,12 @@ export class BulkProcessor {
         break;
       case CarComputeState.RUN:
         {
-          const x = this.carStintsLookup.get(currentCarNum)!;
+          const stint = this.carStintsLookup.get(currentCarNum)!;
 
-          x.current.enterTime = sessionTime;
-          x.current.lapEnter = currentCarLap;
-          x.current.numLaps = currentCarLap - x.current.lapExit + 1;
-          x.current.stintTime = sessionTime - x.current.exitTime;
+          stint.current.enterTime = sessionTime;
+          stint.current.lapEnter = currentCarLap;
+          stint.current.numLaps = currentCarLap - stint.current.lapExit + 1;
+          stint.current.stintTime = sessionTime - stint.current.exitTime;
           switch (currentCarState) {
             case "RUN":
               ccs.outEncountered = 0; // reset possible out-of-race state
@@ -213,10 +213,10 @@ export class BulkProcessor {
               } else {
                 if (sessionTime - ccs.outEncountered > OUT_THRESHOLD) {
                   // car seems to be out of race.
-
+                  // console.log("RUN: moving to out??? session:" + sessionTime + "- outEnc: " + ccs.outEncountered);
                   ccs.state = CarComputeState.OUT;
-                  x.current.isCurrentStint = false;
-                  x.history.push({ ...x.current });
+                  stint.current.isCurrentStint = false;
+                  stint.history.push({ ...stint.current });
                 }
               }
 
@@ -225,8 +225,8 @@ export class BulkProcessor {
 
             case "PIT":
               ccs.outEncountered = 0;
-              x.current.isCurrentStint = false;
-              x.history.push({ ...x.current });
+              stint.current.isCurrentStint = false;
+              stint.history.push({ ...stint.current });
               ccs.state = CarComputeState.PIT;
 
               const newPitEntry: IPitInfo = {
@@ -275,6 +275,7 @@ export class BulkProcessor {
             } else {
               if (sessionTime - ccs.outEncountered > OUT_THRESHOLD) {
                 // car seems to be out of race.
+                //console.log("moving to out??? session:" + sessionTime + "- outEnc: " + ccs.outEncountered);
                 ccs.state = CarComputeState.OUT;
               }
             }
@@ -284,10 +285,9 @@ export class BulkProcessor {
             ccs.outEncountered = 0;
             break;
         }
+        break;
       }
       case CarComputeState.OUT:
-        // when in OUT state, we only accept RUN to enter the state machine again.
-        // PIT in currentCarState would indicate "driver entered the car again". Let's simply wait until he leaves the pit lane and issues a RUN
         switch (currentCarState) {
           case "RUN":
             {
@@ -301,6 +301,23 @@ export class BulkProcessor {
               };
               ccs.state = CarComputeState.RUN;
             }
+            break;
+          case "PIT":
+            // PIT in currentCarState would indicate "driver entered the car again". Process this as "normal" pit stop (makes life easier)
+            const newPitEntry: IPitInfo = {
+              ...defaultPitInfo,
+              carNum: currentCarNum,
+              lapEnter: currentCarLap,
+              enterTime: sessionTime,
+              isCurrentPitstop: true,
+            };
+            let carPitEntry = this.carPitsLookup.get(currentCarNum);
+            if (carPitEntry === undefined) {
+              this.carPitsLookup.set(currentCarNum, { carNum: currentCarNum, current: newPitEntry, history: [] });
+            } else {
+              carPitEntry.current = newPitEntry;
+            }
+            ccs.state = CarComputeState.PIT;
             break;
         }
     }
