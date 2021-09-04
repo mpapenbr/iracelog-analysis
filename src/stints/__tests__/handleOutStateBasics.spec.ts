@@ -306,7 +306,7 @@ describe("handling OUT state", () => {
           ],
         },
       ],
-      carPits: [],
+      carPits: [{ carNum: "1", current: { enterTime: 80, exitTime: 81, isCurrentPitstop: false } }],
       carComputeState: [{ carNum: "1", outEncountered: 0, state: CarComputeState.RUN }],
     };
     const result = bulkProcess(manifests, data);
