@@ -1,3 +1,17 @@
+#### 1.1.1 (2021-09-04)
+
+##### Documentation Changes
+
+*  state diagram ([f3d38214](https://github.com/mpapenbr/iracelog-analysis/commit/f3d38214e1800fbb446dc4e164652bcf755866e6))
+
+##### Bug Fixes
+
+*  handling of rejoin ([#13](https://github.com/mpapenbr/iracelog-analysis/pull/13)) ([51cae2df](https://github.com/mpapenbr/iracelog-analysis/commit/51cae2df309d3f2951f3b6b892d62253b5ca8fc5))
+
+##### Other Changes
+
+* mpapenbr/issue13 ([2110b4a5](https://github.com/mpapenbr/iracelog-analysis/commit/2110b4a58f99ce5ff0f6d804cc24b6cfd914570b))
+
 ### 1.1.0 (2021-09-01)
 
 ##### Continuous Integration
