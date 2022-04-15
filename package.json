@@ -1,6 +1,6 @@
 {
   "name": "@mpapenbr/iracelog-analysis",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "analysis routines for iracelog",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,7 +32,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/index.js",
-    "check-neo": "tsc && node dist/check-neo.js",
+    "check-leipert": "tsc && node dist/check-leipert.js",
+    "check-brands": "tsc && node dist/check-brands.js",
     "test": "jest --watch --runInBand",
     "testCI": "jest --runInBand",
     "preversion": "yarn testCI",
