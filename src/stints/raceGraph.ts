@@ -14,7 +14,7 @@ export const processForRaceGraph = (
 ): IRaceGraph[] => {
   const leaderEntry = newData.find((dataRow) => getValueViaSpec(dataRow, manifests.car, "pos") === 1);
 
-  if (leaderEntry === undefined) return [];
+  if (leaderEntry === undefined) return currentRaceGraph;
   let work = [...currentRaceGraph];
   const picLookup = computePicLookup(manifests, newData);
   const isRetired = (carNum: string): boolean => carComputeStates.get(carNum)?.state === CarComputeState.OUT ?? false;
@@ -71,10 +71,13 @@ export const processForRaceGraphForOverall = (
   picLookup: Map<string, number>
 ): IRaceGraph[] => {
   const leaderEntry = newData.find((dataRow) => getValueViaSpec(dataRow, manifests.car, "pos") === 1);
-  if (leaderEntry === undefined) return currentRaceGraph;
+  if (leaderEntry === undefined) {
+    return currentRaceGraph;
+  }
 
   const leaderLap = getValueViaSpec(leaderEntry, manifests.car, "lc");
   const foundIdx = currentRaceGraph.findIndex((v) => v.lapNo === leaderLap);
+
   // const isRetired = (carEntry: []): boolean => {
   //   return (
   //     carComputeStates.get(getValueViaSpec(carEntry, manifests.car, "carNum"))?.state === CarComputeState.OUT ?? false
@@ -93,6 +96,7 @@ export const processForRaceGraphForOverall = (
         pic: picLookup.get(getValueViaSpec(carEntry, manifests.car, "carNum"))!,
       })),
   };
+
   if (foundIdx === -1) {
     return [...currentRaceGraph, newLapEntry];
   } else {

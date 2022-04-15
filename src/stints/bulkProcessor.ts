@@ -88,10 +88,13 @@ export class BulkProcessor {
       this.processStintAndPit(carEntry, sessionTime);
       this.processDriverAndTeam(carEntry, sessionTime);
     });
+
     this.raceOrder = processForRaceOrder(this.manifests, carsData);
     this.raceGraph = processForRaceGraph(this.manifests, this.carComputeState, this.raceGraph, carsData);
+
     this.processForLapGraph(carsData);
-    if (m.payload.messages.length > 0)
+
+    if (m.payload.messages?.length > 0)
       this.infoMsg.push({ msgType: 1, timestamp: m.timestamp, data: m.payload.messages });
   }
 
