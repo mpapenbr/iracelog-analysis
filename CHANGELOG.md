@@ -1,3 +1,9 @@
+#### 1.1.2 (2022-04-15)
+
+##### Bug Fixes
+
+*  don't delete raceGraph if no leaderEntry was found ([04e8a77b](https://github.com/mpapenbr/iracelog-analysis/commit/04e8a77b9c7d59fb4bd78db91971f3d6272e1a04))
+
 #### 1.1.1 (2021-09-04)
 
 ##### Documentation Changes
