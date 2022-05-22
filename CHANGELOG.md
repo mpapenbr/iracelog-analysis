@@ -1,3 +1,17 @@
+#### 1.1.3 (2022-05-22)
+
+##### Build System / Dependencies
+
+* **deps-dev:**  jest 28.1, typescript 4.6.4, ts-jest 28.0 ([7e73817e](https://github.com/mpapenbr/iracelog-analysis/commit/7e73817ec49350fb9f950a84a5fea7247589bff0))
+
+##### Bug Fixes
+
+*  processForLapGraph only handles incoming numbers as laptime ([3b8bf12a](https://github.com/mpapenbr/iracelog-analysis/commit/3b8bf12adf0e6026be15198e783f7a78bcee0215))
+
+##### Tests
+
+*  additional test for -1 in pos/pic ([dd347fde](https://github.com/mpapenbr/iracelog-analysis/commit/dd347fdeac78efe6648a0522266e0d5c83ca867e))
+
 #### 1.1.2 (2022-04-15)
 
 ##### Bug Fixes
