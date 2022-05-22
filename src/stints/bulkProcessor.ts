@@ -102,7 +102,8 @@ export class BulkProcessor {
     newData.forEach((carEntry) => {
       const currentCarNum = getValueViaSpec(carEntry, this.manifests.car, "carNum");
       const currentCarLap = getValueViaSpec(carEntry, this.manifests.car, "lc");
-      const currentCarLapTime = getValueViaSpec(carEntry, this.manifests.car, "last");
+      const currentCarLapTimeRaw = getValueViaSpec(carEntry, this.manifests.car, "last");
+      const currentCarLapTime = Array.isArray(currentCarLapTimeRaw) ? currentCarLapTimeRaw[0] : currentCarLapTimeRaw;
       if (currentCarLap < 1) return;
       let found = this.carLaps.get(currentCarNum);
       if (found === undefined) {
