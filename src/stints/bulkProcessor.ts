@@ -138,7 +138,7 @@ export class BulkProcessor {
       let currentEntry = newDriverEntry();
       csEntry = {
         carNum: currentCarNum,
-        name: currentTeamName,
+        name: currentTeamName ?? currentDriverName,
         carClass: getValueViaSpec(carEntry, this.manifests.car, "carClass"),
         drivers: [currentEntry],
         current: newDriverEntry(),

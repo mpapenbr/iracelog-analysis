@@ -4,7 +4,7 @@ import { bulkProcessFile } from "../bulkProcessingBackend";
 import { BulkProcessor } from "../bulkProcessor";
 import { defaultProcessRaceStateData } from "../types";
 
-describe("process test messages", () => {
+describe("process test messages with team and carClass", () => {
   const testManifestsFile = __dirname + "/../__mockData__/test-manifests.json";
   const testDataFile = __dirname + "/../__mockData__/sample-json-data.txt";
   const manifests = readManifestsFromFile(testManifestsFile);
