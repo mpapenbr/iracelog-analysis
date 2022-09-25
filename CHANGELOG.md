@@ -1,3 +1,17 @@
+### 1.2.0 (2022-09-25)
+
+##### Chores
+
+*  init devcontainer ([2179d18f](https://github.com/mpapenbr/iracelog-analysis/commit/2179d18ff37b335f78c3b3ce1343e04455cf7426))
+
+##### New Features
+
+*  Adapt to racelogger 0.5.0 data ([449930f8](https://github.com/mpapenbr/iracelog-analysis/commit/449930f89a8b25956419b4505360ea3bd929a8c8))
+
+##### Other Changes
+
+* mpapenbr/issue17 ([cc8315a7](https://github.com/mpapenbr/iracelog-analysis/commit/cc8315a7a91d216210d627f297d764827ab62602))
+
 #### 1.1.3 (2022-05-22)
 
 ##### Build System / Dependencies
